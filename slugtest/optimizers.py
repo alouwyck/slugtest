@@ -3,7 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from abc import ABC, abstractmethod
 from slugtest import parameters, functions, models
-from scipy.optimize import fmin
+from scipy.optimize import fmin, least_squares
 
 matplotlib.rcParams.update({"font.size": 16})
 
@@ -217,6 +217,30 @@ class NelderMead(Optimizer):
         x0 = self.get_ini_values()
         xopt = fmin(lambda x: self.objective_function(x), x0)
         self.set_values(xopt)
+
+
+class LevenbergMarquardt(NelderMead):
+
+    def __init__(self, model):
+        super().__init__(model)
+        self.diff_step = 0.01
+        self.status = None
+        self.message = None
+
+    def run(self):
+        x0 = self.get_ini_values()
+        result = least_squares(lambda x: self.objective_function(x), x0,
+                               method='lm', diff_step=self.diff_step)
+        self.status = result.status
+        self.message = result.message
+        if self.status > 0:
+            self.set_values(result.x)
+
+    def objective_function(self, x):
+        self.set_values(x)
+        self.model.run()
+        self.reset_values()
+        return self.get_eta()
 
 
 class LinearRegression(Optimizer):
