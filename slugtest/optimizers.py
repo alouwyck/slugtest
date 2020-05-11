@@ -173,6 +173,45 @@ class NelderMead(Optimizer):
 
     def __init__(self, model):
         super().__init__(model)
+        self.Kh = None
+        self.Ss = None
+        self.s0 = None
+        self.Kv = None
+        self.ani = None
+
+    def add_Kh(self, ini_value=None, log=True):
+        self.Kh = self.add_parameter(self.model.aquifer, 'Kh', ini_value)
+        self.Kh.log = log
+
+    def add_Ss(self, ini_value=None, log=True):
+        self.Ss = self.add_parameter(self.model.aquifer, 'Ss', ini_value)
+        self.Ss.log = log
+
+    def add_s0(self, ini_value=None, log=True):
+        self.s0 = self.add_parameter(self.model.test, 's0', ini_value)
+        self.s0.log = log
+
+    def add_Kv(self, ini_value=None, log=True):
+        self.Kv = self.add_parameter(self.model.aquifer, 'Kv', ini_value)
+        self.Kv.log = log
+
+    def keep_ani(self, ini_value=None):
+        # ani = Kv / Kh
+        # Kv_ini_value = Kh_ini_value * ini_value
+        if ini_value is not None:
+            ini_value *= self.Kh.ini_value
+        self.Kv = self.add_dependent(self.Kh, self.model.aquifer, 'Kv', ini_value)
+
+    def add_ani(self, ini_value=None, log=True):
+        # ani = Kv / Kh
+        # Kv_ini_value = Kh_ini_value * ini_value
+        if ini_value is not None:
+            ini_value *= self.Kh.ini_value
+        self.ani, _, self.Kv = self.add_composed(self.Kh,
+                                                 [self.model.aquifer, 'Kv', ini_value],
+                                                 lambda Kh, Kv: Kv / Kh,
+                                                 lambda Kh, ani: Kh * ani)
+        self.ani.log = log
 
     def run(self):
         x0 = self.get_ini_values()
