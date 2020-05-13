@@ -50,5 +50,24 @@ class SlugTest:
         self.aquifer = well.aquifer
         self.well = well
         self.s0 = s0
-        self.t = t
-        self.sobs = sobs
+        self._t = t
+        self._sobs = sobs
+        self.dt = 0.0
+        self.ds = 0.0
+
+    @property
+    def t(self):
+        return self._t + self.dt
+
+    @t.setter
+    def t(self, t):
+        self._t = t
+
+    @property
+    def sobs(self):
+        return self._sobs + self.ds
+
+    @sobs.setter
+    def sobs(self, sobs):
+        self._sobs = sobs
+
