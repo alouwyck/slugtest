@@ -57,7 +57,10 @@ class SlugTest:
 
     @property
     def t(self):
-        return self._t + self.dt
+        if self._t is None:
+            return None
+        else:
+            return self._t + self.dt
 
     @t.setter
     def t(self, t):
@@ -65,7 +68,10 @@ class SlugTest:
 
     @property
     def sobs(self):
-        return self._sobs + self.ds
+        if self._sobs is None:
+            return None
+        else:
+            return self._sobs + self.ds
 
     @sobs.setter
     def sobs(self, sobs):
