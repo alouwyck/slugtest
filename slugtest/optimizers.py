@@ -72,6 +72,7 @@ class Optimizer(ABC):
         # left plot: drawdowns
         _, hs = self.model.plot(hax=h['ax']['s'], plot_function=plot_function_s)
         h['s'] = hs['s']
+        h['sobs'] = hs['sobs']
         h['ax']['s'].set_xlabel('t')
         h['ax']['s'].set_ylabel('s')
         h['ax']['s'].grid(which='both', axis="both")
