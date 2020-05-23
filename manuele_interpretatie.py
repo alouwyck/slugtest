@@ -17,7 +17,7 @@ class ManueleInterpretatie:
         self.well.rs = rs
         self.well.rc = rc
 
-    def run(self, Kh=None, Ss=None, s0=None, Ani=None):
+    def run(self, Kh=None, Ss=None, s0=None, Ani=None, dt=None, ds=None):
 
         if Kh is not None:
             self.aquifer.Kv *= Kh / self.aquifer.Kh
@@ -28,6 +28,10 @@ class ManueleInterpretatie:
             self.test.s0 = s0
         if Ani is not None:
             self.aquifer.Kv = self.aquifer.Kh * Ani
+        if dt is not None:
+            self.test.dt = dt
+        if ds is not None:
+            self.test.ds = ds
 
         self.model.run()
 
@@ -41,4 +45,6 @@ class ManueleInterpretatie:
         return {'Kh': self.aquifer.Kh,
                 'Ss': self.aquifer.Ss,
                 's0': self.test.s0,
-                'Ani': self.aquifer.Kv / self.aquifer.Kh}
+                'Ani': self.aquifer.Kv / self.aquifer.Kh,
+                'dt': self.test.dt,
+                'ds': self.test.ds}
