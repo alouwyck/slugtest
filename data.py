@@ -146,7 +146,7 @@ class CutFile(File):
             t, sobs = self.select(t, sobs, nt)
 
         test = well.add_test(m[2, 1], t / 3600 / 24, sobs)
-        test.dt = m[5, 0]
+        test.dt = m[5, 0] / 3600 / 24
         test.ds = m[5, 1]
 
         self.aquifer = aquifer
