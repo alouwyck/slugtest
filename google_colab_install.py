@@ -1,6 +1,6 @@
 import os
 import shutil
-import time
+
 
 # unzip
 os.system('unzip slugtest-master.zip -d .')
@@ -25,11 +25,8 @@ for file in files:
 # delete parent dir
 shutil.rmtree(parent_dir)
 
-
 # install pydov
 os.system('git clone git://github.com/DOV-Vlaanderen/pydov')
 os.chdir('pydov')
 os.system('python setup.py install')
 os.chdir('..')
-time.sleep(1)
-os.kill(os.getpid(), 9)  # herstarten Google Colab runtime -> geeft foutmelding, maar is ok
