@@ -23,6 +23,7 @@ class PutFilter:
         self.y = None
         self.maaiveld = None
         self.permkey = None
+        self.permkey_put = None
         self.boornummer = None
         self.hcov = None
         self.peilmetingen = None
@@ -169,22 +170,31 @@ class PutFilterQuery:
             )
         ])
 
+    def get_boring(self, boornummer):
+        return [boring for boring in self.boring
+                if boring.boornummer == boornummer][0]
+
+    def get_interpretatie(self, interpretatie_type):
+        return [interpretatie for interpretatie in self.interpretatie
+                if interpretatie.type == interpretatie_type]
+
     def info(self):
         gwfilter = GrondwaterFilterSearch()
-        return_fields = ('pkey_filter', 'x', 'y', 'mv_mtaw', 'boornummer',
-                         'aquifer_code')
+        return_fields = ('pkey_grondwaterlocatie', 'pkey_filter', 'x', 'y',
+                         'mv_mtaw', 'boornummer', 'aquifer_code')
         df = gwfilter.search(query=self.__query, return_fields=return_fields)
         self.putfilter.x = df['x'][0]
         self.putfilter.y = df['y'][0]
         self.putfilter.maaiveld = df['mv_mtaw'][0]
         self.putfilter.permkey = df['pkey_filter'][0]
+        self.putfilter.permkey_put = df['pkey_grondwaterlocatie'][0]
         self.putfilter.boornummer = df['boornummer'][0]
         self.putfilter.hcov = df['aquifer_code'][0]
 
     def peilmetingen(self):
         gwfilter = GrondwaterFilterSearch()
-        return_fields = ('pkey_filter', 'datum', 'peil_mtaw', 'betrouwbaarheid',
-                         'filterstatus')
+        return_fields = ('pkey_filter', 'datum', 'peil_mtaw',
+                         'betrouwbaarheid', 'filterstatus')
         df = gwfilter.search(query=self.__query, return_fields=return_fields)
         self.putfilter.peilmetingen = df
 
@@ -227,7 +237,7 @@ class PutFilterQuery:
         interpretatie = LithologischeBeschrijvingenSearch()
         interpretatie_type = 'lithologische_beschrijving'
         specific_fields = ('beschrijving',)
-        return self.__get_interpretatie(interpretatie, interpretatie_type,
+        return self.__query_interpretatie(interpretatie, interpretatie_type,
                                         specific_fields)
 
     def gecodeerde_lithologie(self):
@@ -240,38 +250,38 @@ class PutFilterQuery:
                            'bijmenging2_plaatselijk',
                            'bijmenging3_grondsoort', 'bijmenging3_hoeveelheid',
                            'bijmenging3_plaatselijk')
-        return self.__get_interpretatie(interpretatie, interpretatie_type,
+        return self.__query_interpretatie(interpretatie, interpretatie_type,
                                         specific_fields)
 
     def informele_stratigrafie(self):
         interpretatie = InformeleStratigrafieSearch()
         interpretatie_type = 'informele_stratigrafie'
         specific_fields = ('beschrijving',)
-        return self.__get_interpretatie(interpretatie, interpretatie_type,
+        return self.__query_interpretatie(interpretatie, interpretatie_type,
                                         specific_fields)
 
     def formele_stratigrafie(self):
         interpretatie = FormeleStratigrafieSearch()
         interpretatie_type = 'formele_stratigrafie'
         specific_fields = ('lid1', 'lid2')
-        return self.__get_interpretatie(interpretatie, interpretatie_type,
+        return self.__query_interpretatie(interpretatie, interpretatie_type,
                                         specific_fields)
 
     def informele_hydrostratigrafie(self):
         interpretatie = InformeleHydrogeologischeStratigrafieSearch()
         interpretatie_type = 'informele_hydrostratigrafie'
         specific_fields = ('beschrijving',)
-        return self.__get_interpretatie(interpretatie, interpretatie_type,
+        return self.__query_interpretatie(interpretatie, interpretatie_type,
                                         specific_fields)
 
     def formele_hydrostratigrafie(self):
         interpretatie = HydrogeologischeStratigrafieSearch()
         interpretatie_type = 'formele_hydrostratigrafie'
         specific_fields = ('aquifer',)
-        return self.__get_interpretatie(interpretatie, interpretatie_type,
+        return self.__query_interpretatie(interpretatie, interpretatie_type,
                                         specific_fields)
 
-    def __get_interpretatie(self, interpretatie, interpretatie_type, specific_fields):
+    def __query_interpretatie(self, interpretatie, interpretatie_type, specific_fields):
         common_fields = ('pkey_interpretatie', 'pkey_boring', 'Auteurs', 'Datum',
                          'betrouwbaarheid_interpretatie', 'x', 'y', 'Z_mTAW',
                          'diepte_laag_van', 'diepte_laag_tot')
@@ -339,5 +349,5 @@ class PutFilterQuery:
             )
             self.boring.append(boring)
         else:
-            boring = [boring for boring in self.boring if boring.boornummer == boornummer][0]
+            boring = self.get_boring(boornummer)
         return boring
