@@ -2,7 +2,7 @@ import os, glob
 from abc import ABC, abstractmethod
 import numpy as np
 import matplotlib.pyplot as plt
-from slugtest import inputs
+from .slugtest import inputs
 
 
 class Base(ABC):
