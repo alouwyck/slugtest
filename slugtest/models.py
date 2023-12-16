@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from abc import ABC, abstractmethod
-from slugtest import functions
+from . import functions
 
 matplotlib.rcParams.update({"font.size": 16})
 
