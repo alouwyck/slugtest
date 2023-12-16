@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from abc import ABC, abstractmethod
-from slugtest import parameters, functions, models
+from . import parameters, functions, models
 from scipy.optimize import fmin, least_squares
 
 matplotlib.rcParams.update({"font.size": 16})
